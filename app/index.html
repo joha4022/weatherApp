@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link link rel="stylesheet" text="text/css" href="index.css">
+    <title>Weather App</title>
+</head>
+<body>
+    <script id = "googleAPI" async src="https://maps.googleapis.com/maps/api/js?key=API_KEY&libraries=places&callback=initMap"></script>
+    <script src = 'weatherApp.js' type="text/javascript"></script>
+
+    <h1>Weather App</h1>
+    
+    <p><input type="text" id="searchBar" placeholder="Search City" autocomplete="on"></input>
+        <button type="button" id="searchButton">Search</button></br></p>
+
+        <input type="checkbox" id="tb">°F
+
+    <p>Weather for: <strong><span id="city" autocomplete="on"></span></strong></p>
+    <p>&nbsp;&nbsp;Temperature: <strong><span id="temperature"></span></strong><br>
+        &nbsp;&nbsp;<strong><span id="description"></span></strong><img id="icon" src=""></img><br><br>
+        &nbsp;&nbsp;H: <strong><span id="Htemperature"></span></strong><br>
+        &nbsp;&nbsp;L: <strong><span id="Ltemperature"></span></strong></p>
+
+    <script>
+
+        //html variables
+        var htmlCity = document.getElementById('city');
+        var T = document.getElementById('temperature');
+        var H = document.getElementById('Htemperature');
+        var L = document.getElementById('Ltemperature');
+        const searching = document.getElementById('searchButton');
+        const searchingCity = document.getElementById('searchBar');
+
+        //function to search the weather by looking up the city
+        async function searchWeather(inputData, fetchType_String) {
+            const swOptions = {
+                headers: {
+                    'Content-Type' : 'application/json'
+                },
+                method: 'POST',
+                body: JSON.stringify(inputData)
+            }
+            const response = await fetch(fetchType_String, swOptions);
+            const data = await response.json();
+            console.log (data);
+            if (data.errorMessage=="city not found") {
+                alert("Type in a existing city!" )
+            } else {
+                htmlCity.textContent = data.location;
+                displayData(data);
+            }
+        }
+
+        //automatically received coordinates for my current location
+        if ('geolocation' in navigator) {
+            navigator.geolocation.getCurrentPosition(function(position){
+                
+                console.log(position.coords.latitude);
+                console.log(position.coords.longitude);
+                currentCoords.lat=position.coords.latitude;
+                currentCoords.lon=position.coords.longitude;
+                
+                searchWeather(currentCoords, '/currentCitySearch')
+            });
+        } else {
+            console.log('could not get the coorrdinates and search the weather for current location');
+        }
+
+        //listening for search button to be clicked and execute searchWeather() once it is clicked.
+        document.getElementById('searchButton').addEventListener('click', function() {
+            if (searchingCity.value.length > 0) {
+                //takes the input and stores it in as the searching city
+                city.CITY = searchingCity.value;
+                console.log('requseting weather for ' + '[' + city.CITY + ']' + ' to the server');
+                searchWeather(city, '/citySearch');
+            } else {
+                alert('Please type in your city');
+            }
+        });
+        
+        //listens whether the user wants to view the temperature in fahrenheit or celsius. Default is C.
+        document.getElementById('tb').addEventListener('change', function() {
+            if (document.getElementById('tb').checked) {  
+                T.textContent = fTemp;
+                H.textContent = fTempH;
+                L.textContent = fTempL;
+            } else {
+                H.textContent = cTemp;
+                T.textContent = cTempH;
+                L.textContent = cTempL;
+            }
+        }); 
+    </script>
+</body>
+</html>
