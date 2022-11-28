@@ -3,5 +3,6 @@ Simple webapp user can use to search the weather in a particular city. As long a
 Used: 
 - Node.js
 - Express.js
+- dotEnv
 - JavaScript
 - Html
