@@ -6,3 +6,5 @@ Used:
 - dotEnv
 - JavaScript
 - Html
+
+Replace index.html line 11 "API_KEY" with personal Google API Key
